@@ -1,0 +1,5 @@
+functions-framework
+Flask
+openai
+google-search-results
+markupsafe
