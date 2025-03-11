@@ -48,3 +48,4 @@ app.*.map.json
 #functions
 functions/.env
 functions/__pycache__
+node_modules
