@@ -7,10 +7,14 @@ from openai import OpenAI
 from serpapi import GoogleSearch
 import functions_framework
 from flask_cors import cross_origin 
+from dotenv import load_dotenv
+
+# Load the .env file
+load_dotenv()
 
 # Retrieve your API keys from environment variables
-OPENAI_KEY = os.environ.get("OPENAI_KEY", "YOUR_OPENAI_KEY")
-SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "YOUR_SERPAPI_KEY")
+OPENAI_KEY = os.environ.get("OPENAI_KEY")
+SERPAPI_KEY = os.environ.get("SERPAPI_KEY")
 
 client = OpenAI(api_key=OPENAI_KEY)
 

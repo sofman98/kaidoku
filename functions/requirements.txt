@@ -3,3 +3,4 @@ Flask
 openai
 google-search-results
 markupsafe
+python-dotenv
