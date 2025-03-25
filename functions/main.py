@@ -5,7 +5,6 @@ from markupsafe import escape
 
 from openai import OpenAI
 from serpapi import GoogleSearch
-import functions_framework
 from flask_cors import cross_origin 
 from dotenv import load_dotenv
 
