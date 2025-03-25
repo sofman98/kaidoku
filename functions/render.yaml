@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: kaidoku-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    envVars:
+      - key: OPENAI_KEY
+        sync: false
+      - key: SERPAPI_KEY
+        sync: false 

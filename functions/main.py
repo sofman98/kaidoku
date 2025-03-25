@@ -1,6 +1,6 @@
 import os
 from urllib.parse import urlparse
-from flask import request, Response, stream_with_context
+from flask import request, Response, stream_with_context, Flask
 from markupsafe import escape
 
 from openai import OpenAI
@@ -17,6 +17,9 @@ OPENAI_KEY = os.environ.get("OPENAI_KEY")
 SERPAPI_KEY = os.environ.get("SERPAPI_KEY")
 
 client = OpenAI(api_key=OPENAI_KEY)
+
+# Create Flask app
+app = Flask(__name__)
 
 def parse_location(user_location):
     """Convert user location to a SerpAPI-compatible country code."""
@@ -127,11 +130,11 @@ def search_products(query, country_code):
         print(f"Product search error: {e}")
         return []
 
-@functions_framework.http
+@app.route('/', methods=['GET', 'POST'])
 @cross_origin()
-def product_search(request):
+def product_search():
     """
-    HTTP Cloud Function that accepts a product query and streams
+    HTTP endpoint that accepts a product query and streams
     output gradually as it's generated. It ignores any provided location
     and always uses 'Berlin, Germany'.
     """
@@ -154,7 +157,6 @@ def product_search(request):
     country_code = parse_location(location)
 
     def generate_response():
-        # yield f"Products for '{query}' in {location}:\n\n"
         products = search_products(query, country_code)
         if not products:
             yield "No products found.\n"
@@ -164,7 +166,6 @@ def product_search(request):
             yield f"Product {idx}: {title}\n"
             purchase_info = get_purchase_info(product)
             yield f"  Price: {purchase_info['price']}\n"
-            # yield f"  Seller: {purchase_info['seller']}\n"
             yield f"  Purchase Link: {purchase_info['link']}\n"
             yield "  Analyzing reviews...\n"
             reviews = find_product_reviews(title, country_code)
@@ -181,3 +182,7 @@ def product_search(request):
             yield "\n"
     
     return Response(stream_with_context(generate_response()), mimetype='text/plain')
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port)
